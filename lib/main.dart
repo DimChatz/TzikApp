@@ -8,11 +8,11 @@ import 'theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const TzikApp());
+  runApp(const AporiaApp());
 }
 
-class TzikApp extends StatelessWidget {
-  const TzikApp({super.key});
+class AporiaApp extends StatelessWidget {
+  const AporiaApp({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../config.dart';
 import '../services/favourites_store.dart';
 import '../services/question_repository.dart';
+import '../services/teams_store.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/logo.dart';
@@ -11,7 +12,7 @@ import 'home_screen.dart';
 
 const _minSplashTime = Duration(milliseconds: 1600);
 
-/// Shows the logo while questions and favourites load, then moves on to
+/// Shows the logo while questions, favourites and teams load, then moves on to
 /// [HomeScreen].
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,13 +35,17 @@ class _SplashScreenState extends State<SplashScreen> {
       final minDelay = Future<void>.delayed(_minSplashTime);
       final questions = await loadQuestions(rootBundle);
       final favourites = await FavouritesStore.load();
+      final teams = await TeamsStore.load();
       await minDelay;
       if (!mounted) return;
       Navigator.of(context).pushReplacement(
         PageRouteBuilder<void>(
           transitionDuration: const Duration(milliseconds: 600),
-          pageBuilder: (_, _, _) =>
-              HomeScreen(questions: questions, favourites: favourites),
+          pageBuilder: (_, _, _) => HomeScreen(
+            questions: questions,
+            favourites: favourites,
+            teams: teams,
+          ),
           transitionsBuilder: (_, animation, _, child) =>
               FadeTransition(opacity: animation, child: child),
         ),
@@ -69,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const TzikLogo(size: 140),
+                  const AporiaLogo(size: 140),
                   const SizedBox(height: 24),
                   Text(
                     appName,

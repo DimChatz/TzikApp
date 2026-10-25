@@ -14,7 +14,7 @@ import 'package:tzikapp/theme.dart';
 import 'package:tzikapp/widgets/logo.dart';
 
 // Android shows the middle 72 of an adaptive icon's 108 units, cropped to the
-// phone's icon shape. Shrinking the T and stretching the gradient by this
+// phone's icon shape. Shrinking the A and stretching the gradient by this
 // factor makes the visible part look like the full logo.
 const _androidVisible = 72 / 108;
 
@@ -46,7 +46,7 @@ void main() {
     </linearGradient>
   </defs>
   <rect width="1024" height="1024" fill="url(#background)"/>
-  <path fill="${_hex(brandNavy)}" d="$letterTPathData"/>
+  <path fill="${_hex(brandNavy)}" d="$letterAPathData"/>
 </svg>
 ''');
 

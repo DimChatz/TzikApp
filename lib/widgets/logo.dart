@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../theme.dart';
 
-/// The T as SVG path data on a 1024 x 1024 canvas: rounded outer corners and
-/// small fillets where the stem meets the bar. Also used for the app icons
-/// and branding/logo.svg (see tool/render_logo_test.dart).
-const letterTPathData =
-    'M276 250 L748 250 A44 44 0 0 1 792 294 L792 364 A44 44 0 0 1 748 408 '
-    'L626 408 A28 28 0 0 0 598 436 L598 746 A44 44 0 0 1 554 790 '
-    'L470 790 A44 44 0 0 1 426 746 L426 436 A28 28 0 0 0 398 408 '
-    'L276 408 A44 44 0 0 1 232 364 L232 294 A44 44 0 0 1 276 250 Z';
+/// The A as SVG path data on a 1024 x 1024 canvas: a flat-topped A with
+/// rounded corners, small fillets under the crossbar and a triangular hole,
+/// wound the other way so it stays empty. Also used for the app icons and
+/// branding/logo.svg (see tool/render_logo_test.dart).
+const letterAPathData =
+    'M 411.7 279.4 A 44 44 0 0 1 453.2 250 L 570.8 250 A 44 44 0 0 1 612.3 279.4 '
+    'L 771.4 731.4 A 44 44 0 0 1 729.9 790 L 693.2 790 A 44 44 0 0 1 651.7 760.6 '
+    'L 612.3 648.7 A 28 28 0 0 0 585.9 630 L 438.1 630 A 28 28 0 0 0 411.7 648.7 '
+    'L 372.3 760.6 A 44 44 0 0 1 330.8 790 L 294.1 790 A 44 44 0 0 1 252.6 731.4 Z '
+    'M 527.1 406.6 A 16 16 0 0 0 496.9 406.6 L 464.5 498.7 '
+    'A 16 16 0 0 0 479.6 520 L 544.4 520 A 16 16 0 0 0 559.5 498.7 Z';
 
-final Path letterT = _parsePathData(letterTPathData);
+final Path letterA = _parsePathData(letterAPathData);
 
 /// The app logo with the rounded corners of an app icon. A soft shadow sets
 /// it apart from the matching gradient behind it.
-class TzikLogo extends StatelessWidget {
-  const TzikLogo({super.key, required this.size});
+class AporiaLogo extends StatelessWidget {
+  const AporiaLogo({super.key, required this.size});
 
   final double size;
 
@@ -24,7 +27,7 @@ class TzikLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     final corners = BorderRadius.circular(size * 0.2237);
     return Semantics(
-      label: 'TzikApp logo',
+      label: 'Aporia logo',
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: corners,
@@ -62,7 +65,7 @@ class LogoPainter extends CustomPainter {
   /// Null leaves out the letter.
   final Color? letterColor;
 
-  /// Size of the T relative to the full logo.
+  /// Size of the A relative to the full logo.
   final double letterScale;
 
   @override
@@ -80,7 +83,7 @@ class LogoPainter extends CustomPainter {
         ..translate(512, 512)
         ..scale(letterScale)
         ..translate(-512, -512)
-        ..drawPath(letterT, Paint()..color = letterColor!);
+        ..drawPath(letterA, Paint()..color = letterColor!);
     }
   }
 
@@ -91,7 +94,7 @@ class LogoPainter extends CustomPainter {
       letterScale != oldDelegate.letterScale;
 }
 
-/// Supports the M, L, A and Z commands used by [letterTPathData].
+/// Supports the M, L, A and Z commands used by [letterAPathData].
 Path _parsePathData(String data) {
   final tokens = RegExp(r'[MLAZ]|-?[\d.]+')
       .allMatches(data)
