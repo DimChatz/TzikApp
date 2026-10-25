@@ -7,9 +7,11 @@ Built with Flutter for Android and iOS.
 
 1. A splash screen loads the questions, downloading the latest list from this repo
    (see [Editing the questions](#editing-the-questions)).
-2. The home screen has a big **START** button. Tap it and a question pops up.
-3. In the popup, tap ♥ to save the question to **Favourites**, or **Next** for another one.
-   Questions come in random order and none repeats until you've seen them all.
+2. The home screen has a big **START** button. Tap it and the questions screen opens.
+3. Questions go in order of their number. Use **Previous** and **Next** (or swipe) to move
+   between them, or tap **Question N** at the top to jump straight to a number. Tap ♥ to
+   save a question to **Favourites**. Going back and pressing START again carries on where
+   you left off.
 4. **Propose a question** sends the proposal straight from the app. It arrives in your
    inbox through [Formspree](https://formspree.io) (see [Setting up proposals](#setting-up-proposals)).
 
@@ -19,11 +21,15 @@ All questions live in [`assets/questions.json`](assets/questions.json), one per 
 
 ```json
 [
-  { "text": "Would you rather explore deep space or the deep ocean?" },
-  { "text": "Is free will real, or are we just very complicated dominoes?" }
+  { "index": 1, "text": "Would you rather explore deep space or the deep ocean?" },
+  { "index": 2, "text": "Is free will real, or are we just very complicated dominoes?" }
 ]
 ```
 
+- Every question needs an `index`: its number in the app, a whole number counting from 1.
+  Each number can only be used once. The app shows questions in order of their index,
+  whatever their order in the file. Gaps are allowed, so removing a question doesn't
+  mean renumbering the rest; give a new question the next unused number.
 - Every entry except the last needs a comma after it. If a question contains a
   double quote, write it as `\"`.
 - Commit the change to `main` on GitHub, either by editing the file in the browser
@@ -34,7 +40,7 @@ All questions live in [`assets/questions.json`](assets/questions.json), one per 
   been online uses the copy built into the app, which is refreshed whenever you build
   a new version.
 - If an edit breaks the file, phones ignore it and keep the last good list. To check
-  your edit, run `flutter test`: it verifies the file is valid JSON with no duplicates.
+  your edit, run `flutter test`: it verifies the file is valid JSON with no duplicate questions or indexes.
 - The download address is `questionsUrl` in `lib/config.dart`.
 
 Favourites are stored on the device by question text, so a favourite stays even if
@@ -113,8 +119,8 @@ lib/widgets/logo.dart         the logo, drawn in code
 branding/                     exported logo files and icon layers
 tool/render_logo_test.dart    re-exports branding/ from the code
 config.example.json           template for the git-ignored config.json (Formspree form ID)
-lib/screens/                  splash, home, question popup, favourites, propose
-lib/services/                 loading and shuffling questions, favourites, sending proposals
+lib/screens/                  splash, home, questions, favourites, propose
+lib/services/                 loading questions, favourites, sending proposals
 tool/check_for_leaks.sh       blocks commits and pushes that would publish personal data
 .githooks/                    git hooks that run it
 test/                         tests

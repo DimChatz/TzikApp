@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tzikapp/models/question.dart';
@@ -30,30 +29,82 @@ void main() {
   });
 
   group('parseQuestions', () {
-    test('reads the text of each question, trimming whitespace', () {
+    test('reads each question, trimming whitespace, sorted by index', () {
       final questions = parseQuestions('''
         [
-          {"text": "  First?  "},
-          {"text": "Second?"}
+          {"index": 3, "text": "Third?"},
+          {"index": 1, "text": "  First?  "},
+          {"index": 2, "text": "Second?"}
         ]
       ''');
-      expect(questions.map((q) => q.text), ['First?', 'Second?']);
+      expect(questions.map((q) => q.text), ['First?', 'Second?', 'Third?']);
+      expect(questions.map((q) => q.index), [1, 2, 3]);
+    });
+
+    test('allows gaps in the numbering', () {
+      final questions = parseQuestions(
+        '[{"index": 1, "text": "A?"}, {"index": 5, "text": "B?"}]',
+      );
+      expect(questions.map((q) => q.index), [1, 5]);
+    });
+
+    test('requires an index on every question', () {
+      expect(
+        () => parseQuestions('[{"index": 1, "text": "A?"}, {"text": "B?"}]'),
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            allOf(contains('#2'), contains('"index"')),
+          ),
+        ),
+      );
+    });
+
+    test('rejects indexes that are not whole numbers from 1 up', () {
+      for (final index in ['0', '-1', '1.5', '"1"', 'null']) {
+        expect(
+          () => parseQuestions('[{"index": $index, "text": "A?"}]'),
+          throwsFormatException,
+          reason: index,
+        );
+      }
+    });
+
+    test('rejects a repeated index', () {
+      expect(
+        () => parseQuestions(
+          '[{"index": 1, "text": "A?"}, {"index": 1, "text": "B?"}]',
+        ),
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            contains('"index": 1'),
+          ),
+        ),
+      );
     });
 
     test('rejects broken JSON', () {
       expect(
-        () => parseQuestions('[{"text": "Missing quote}]'),
+        () => parseQuestions('[{"index": 1, "text": "Missing quote}]'),
         throwsFormatException,
       );
     });
 
     test('rejects a file that is not a list', () {
-      expect(() => parseQuestions('{"text": "Hi?"}'), throwsFormatException);
+      expect(
+        () => parseQuestions('{"index": 1, "text": "Hi?"}'),
+        throwsFormatException,
+      );
     });
 
     test('points at the entry with missing text', () {
       expect(
-        () => parseQuestions('[{"text": "Ok?"}, {"txt": "Typo?"}]'),
+        () => parseQuestions(
+          '[{"index": 1, "text": "Ok?"}, {"index": 2, "txt": "Typo?"}]',
+        ),
         throwsA(
           isA<FormatException>().having(
             (e) => e.message,
@@ -66,36 +117,6 @@ void main() {
 
     test('rejects an empty list', () {
       expect(() => parseQuestions('[]'), throwsFormatException);
-    });
-  });
-
-  group('QuestionDeck', () {
-    final questions = [for (var i = 0; i < 5; i++) Question(text: 'Q$i')];
-
-    test('deals every question once before repeating', () {
-      final deck = QuestionDeck(questions, random: Random(1));
-      for (var round = 0; round < 3; round++) {
-        final dealt = {for (var i = 0; i < 5; i++) deck.next().text};
-        expect(dealt, hasLength(5));
-      }
-    });
-
-    test('never deals the same question twice in a row', () {
-      for (var seed = 0; seed < 50; seed++) {
-        final deck = QuestionDeck(questions, random: Random(seed));
-        var previous = deck.next();
-        for (var i = 0; i < 20; i++) {
-          final current = deck.next();
-          expect(current, isNot(same(previous)), reason: 'seed $seed');
-          previous = current;
-        }
-      }
-    });
-
-    test('works with a single question', () {
-      final deck = QuestionDeck([const Question(text: 'Only?')]);
-      expect(deck.next().text, 'Only?');
-      expect(deck.next().text, 'Only?');
     });
   });
 }

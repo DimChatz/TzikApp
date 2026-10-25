@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/proposal_sender.dart';
+import '../widgets/gradient_background.dart';
 
 class ProposeScreen extends StatefulWidget {
   const ProposeScreen({super.key, this.sender});
@@ -70,7 +71,7 @@ class _ProposeScreenState extends State<ProposeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(title: const Text('Propose a question')),
       body: SafeArea(
         child: Form(

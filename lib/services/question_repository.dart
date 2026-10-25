@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -63,7 +62,7 @@ List<Question>? _tryParse(String? source, String label) {
   }
 }
 
-/// Parses the questions file.
+/// Parses the questions file, returning the questions sorted by index.
 ///
 /// Throws a [FormatException] that says what is wrong, so a hand edit that
 /// breaks the file is easy to track down.
@@ -71,50 +70,35 @@ List<Question> parseQuestions(String source) {
   final decoded = jsonDecode(source);
   if (decoded is! List) {
     throw const FormatException(
-      'The questions file must be a list: [ {"text": "..."}, ... ]',
+      'The questions file must be a list: [ {"index": 1, "text": "..."}, ... ]',
     );
   }
 
   final questions = <Question>[];
+  final indexes = <int>{};
   for (var i = 0; i < decoded.length; i++) {
     final entry = decoded[i];
+    final index = entry is Map ? entry['index'] : null;
     final text = entry is Map ? entry['text'] : null;
-    if (text is! String || text.trim().isEmpty) {
-      throw FormatException('Question #${i + 1} needs a non-empty "text".');
+    if (index is! int || index < 1) {
+      throw FormatException(
+        'Question #${i + 1} in the file needs an "index": a whole number '
+        'from 1 up.',
+      );
     }
-    questions.add(Question(text: text.trim()));
+    if (!indexes.add(index)) {
+      throw FormatException('More than one question has "index": $index.');
+    }
+    if (text is! String || text.trim().isEmpty) {
+      throw FormatException(
+        'Question #${i + 1} in the file needs a non-empty "text".',
+      );
+    }
+    questions.add(Question(index: index, text: text.trim()));
   }
 
   if (questions.isEmpty) {
     throw const FormatException('The questions file has no questions.');
   }
-  return questions;
-}
-
-/// Deals questions in random order, going through all of them before any
-/// question repeats.
-class QuestionDeck {
-  QuestionDeck(List<Question> questions, {Random? random})
-    : assert(questions.isNotEmpty),
-      _questions = List.unmodifiable(questions),
-      _random = random ?? Random();
-
-  final List<Question> _questions;
-  final Random _random;
-  final List<Question> _pile = [];
-  Question? _last;
-
-  Question next() {
-    if (_pile.isEmpty) {
-      _pile
-        ..addAll(_questions)
-        ..shuffle(_random);
-      // Don't show the same question twice in a row across a reshuffle.
-      if (_pile.length > 1 && identical(_pile.last, _last)) {
-        _pile.last = _pile.first;
-        _pile.first = _last!;
-      }
-    }
-    return _last = _pile.removeLast();
-  }
+  return questions..sort((a, b) => a.index.compareTo(b.index));
 }

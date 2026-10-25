@@ -20,3 +20,22 @@ class GradientBackground extends StatelessWidget {
     );
   }
 }
+
+/// A [Scaffold] with an app bar, on the brand gradient.
+class GradientScaffold extends StatelessWidget {
+  const GradientScaffold({super.key, required this.appBar, required this.body});
+
+  final PreferredSizeWidget appBar;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return GradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: appBar,
+        body: body,
+      ),
+    );
+  }
+}

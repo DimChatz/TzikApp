@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import '../config.dart';
 import '../models/question.dart';
 import '../services/favourites_store.dart';
-import '../services/question_repository.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/logo.dart';
 import 'favourites_screen.dart';
 import 'propose_screen.dart';
-import 'question_dialog.dart';
+import 'question_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -26,12 +25,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Lives as long as the home screen, so closing and reopening the question
-  // popup carries on through the deck instead of starting over.
-  late final _deck = QuestionDeck(widget.questions);
+  // Lives as long as the home screen, so leaving and reopening the questions
+  // carries on where you left off instead of starting over.
+  var _page = 0;
 
-  void _start() =>
-      showQuestionDialog(context, deck: _deck, favourites: widget.favourites);
+  void _start() => Navigator.of(context).push(
+    PageRouteBuilder<void>(
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (_, _, _) => QuestionScreen(
+        questions: widget.questions,
+        favourites: widget.favourites,
+        initialPage: _page,
+        onPageChanged: (page) => _page = page,
+      ),
+      transitionsBuilder: (_, animation, _, child) => FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.9, end: 1).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+          ),
+          child: child,
+        ),
+      ),
+    ),
+  );
 
   void _open(Widget screen) =>
       Navigator.of(context)
@@ -41,8 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final actionStyle = OutlinedButton.styleFrom(
-      foregroundColor: brandNavy,
-      side: BorderSide(color: brandNavy.withValues(alpha: 0.35)),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
     );
 

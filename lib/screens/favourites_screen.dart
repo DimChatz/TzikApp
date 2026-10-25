@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/favourites_store.dart';
+import '../widgets/gradient_background.dart';
 
 class FavouritesScreen extends StatelessWidget {
   const FavouritesScreen({super.key, required this.favourites});
@@ -25,7 +26,7 @@ class FavouritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(title: const Text('Favourites')),
       body: ListenableBuilder(
         listenable: favourites,
