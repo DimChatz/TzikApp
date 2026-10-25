@@ -1,2 +1,85 @@
 # TzikApp
 An App with interesting questions to ask with your friend group for some constructive interesting boredom.
+
+Built with Flutter for Android and iOS.
+
+## How it works
+
+1. A splash screen loads the questions, downloading the latest list from this repo
+   (see [Editing the questions](#editing-the-questions)).
+2. The home screen has a big **START** button. Tap it and a question pops up.
+3. In the popup, tap ♥ to save the question to **Favourites**, or **Next** for another one.
+   Questions come in random order and none repeats until you've seen them all.
+4. **Propose a question** sends the proposal straight from the app. It arrives in your
+   inbox through [Formspree](https://formspree.io) (see [Setting up proposals](#setting-up-proposals)).
+
+## Editing the questions
+
+All questions live in [`assets/questions.json`](assets/questions.json), one per line:
+
+```json
+[
+  { "text": "Would you rather explore deep space or the deep ocean?" },
+  { "text": "Is free will real, or are we just very complicated dominoes?" }
+]
+```
+
+- Every entry except the last needs a comma after it. If a question contains a
+  double quote, write it as `\"`.
+- Commit the change to `main` on GitHub, either by editing the file in the browser
+  (pencil icon) or by pushing from your computer. **No app update is needed**: phones
+  download the file from `main` every time the app opens. GitHub can take up to about
+  5 minutes to serve the new version.
+- If a phone is offline, it uses the last list it downloaded. A phone that has never
+  been online uses the copy built into the app, which is refreshed whenever you build
+  a new version.
+- If an edit breaks the file, phones ignore it and keep the last good list. To check
+  your edit, run `flutter test`: it verifies the file is valid JSON with no duplicates.
+- The download address is `questionsUrl` in `lib/config.dart`.
+
+Favourites are stored on the device by question text, so a favourite stays even if
+you later edit or remove that question.
+
+## Setting up proposals
+
+The app can't safely hold your email password, so proposals go through Formspree, a free
+service that emails you every submission (free plan: 50 per month).
+
+1. Sign up at [formspree.io](https://formspree.io) with the email address you want proposals sent to.
+2. Create a new form. Its endpoint looks like `https://formspree.io/f/xyzabcde`.
+3. Copy `config.example.json` to `config.json` and put the ID (`xyzabcde`) in it.
+   `config.json` is git-ignored, so the ID stays out of this public repo.
+4. Always run and build with `--dart-define-from-file=config.json` (see below).
+   The included VS Code launch settings already do this.
+
+The ID still ends up inside the built app, which needs it to send proposals. Keeping it
+out of the repo just means it isn't published here. If the form ever gets spammed,
+create a new form in Formspree, delete the old one, and update `config.json`.
+
+Each email has the subject "TzikApp question proposal" and contains the question and,
+if given, the sender's name. If the app was built without the ID, tapping Send shows a
+"not set up" message.
+
+## Running and building
+
+You need the [Flutter SDK](https://docs.flutter.dev/get-started/install). For Android you
+also need Android Studio (or the Android SDK). For iOS you need a Mac with Xcode.
+
+```sh
+flutter pub get
+flutter test                 # unit and widget tests, including the questions file check
+flutter run --dart-define-from-file=config.json         # on a connected phone or emulator
+flutter build apk --dart-define-from-file=config.json   # Android
+flutter build ipa --dart-define-from-file=config.json   # iOS (on a Mac)
+```
+
+## Project layout
+
+```
+assets/questions.json         the questions
+lib/config.dart               app name, questions download URL
+config.example.json           template for the git-ignored config.json (Formspree form ID)
+lib/screens/                  splash, home, question popup, favourites, propose
+lib/services/                 loading and shuffling questions, favourites, sending proposals
+test/                         tests
+```
