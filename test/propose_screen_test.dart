@@ -9,7 +9,7 @@ const _proposal = 'Would you rather fly or be invisible?';
 
 ProposalSender _formspreeReplying(int status, List<String> sentBodies) =>
     ProposalSender(
-      formId: 'abc123',
+      formId: 'xyzabcde',
       client: MockClient((request) async {
         sentBodies.add(request.body);
         return http.Response('{}', status);

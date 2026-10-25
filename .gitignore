@@ -49,3 +49,17 @@ app.*.map.json
 
 # Local build settings (Formspree form ID). See config.example.json.
 /config.json
+
+# Secrets and signing keys. tool/check_for_leaks.sh also blocks these.
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+key.properties
+*.p12
+*.pfx
+*.pem
+*.key
+*.p8
+*.mobileprovision

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Checks what is about to be committed. See tool/check_for_leaks.sh.
+exec "$(git rev-parse --show-toplevel)/tool/check_for_leaks.sh" --staged
