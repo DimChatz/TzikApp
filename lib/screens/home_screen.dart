@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../config.dart';
 import '../models/question.dart';
 import '../services/favourites_store.dart';
+import '../services/teams_store.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/logo.dart';
+import '../widgets/team_dialogs.dart';
 import 'favourites_screen.dart';
 import 'propose_screen.dart';
 import 'question_screen.dart';
@@ -15,40 +17,45 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.questions,
     required this.favourites,
+    required this.teams,
   });
 
   final List<Question> questions;
   final FavouritesStore favourites;
+  final TeamsStore teams;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Lives as long as the home screen, so leaving and reopening the questions
-  // carries on where you left off instead of starting over.
-  var _page = 0;
-
-  void _start() => Navigator.of(context).push(
-    PageRouteBuilder<void>(
-      transitionDuration: const Duration(milliseconds: 450),
-      pageBuilder: (_, _, _) => QuestionScreen(
-        questions: widget.questions,
-        favourites: widget.favourites,
-        initialPage: _page,
-        onPageChanged: (page) => _page = page,
-      ),
-      transitionsBuilder: (_, animation, _, child) => FadeTransition(
-        opacity: animation,
-        child: ScaleTransition(
-          scale: Tween<double>(begin: 0.9, end: 1).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+  /// Playing needs a team, so without one START asks for it first.
+  Future<void> _start() async {
+    final team =
+        widget.teams.selected ??
+        await showCreateTeamDialog(context, widget.teams);
+    if (team == null || !mounted) return;
+    await Navigator.of(context).push(
+      PageRouteBuilder<void>(
+        transitionDuration: const Duration(milliseconds: 450),
+        pageBuilder: (_, _, _) => QuestionScreen(
+          questions: widget.questions,
+          favourites: widget.favourites,
+          teams: widget.teams,
+          team: team,
+        ),
+        transitionsBuilder: (_, animation, _, child) => FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.9, end: 1).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            ),
+            child: child,
           ),
-          child: child,
         ),
       ),
-    ),
-  );
+    );
+  }
 
   void _open(Widget screen) =>
       Navigator.of(context)
@@ -74,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         const Spacer(flex: 2),
-                        const TzikLogo(size: 72),
+                        const AporiaLogo(size: 72),
                         const SizedBox(height: 16),
                         Text(
                           appName,
@@ -92,6 +99,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         const Spacer(flex: 2),
+                        _TeamPicker(
+                          teams: widget.teams,
+                          questionCount: widget.questions.length,
+                        ),
+                        const SizedBox(height: 28),
                         _StartButton(onPressed: _start),
                         const SizedBox(height: 24),
                         const Spacer(flex: 3),
@@ -137,6 +149,66 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Buttons to create a team and to pick which one is playing.
+class _TeamPicker extends StatelessWidget {
+  const _TeamPicker({required this.teams, required this.questionCount});
+
+  final TeamsStore teams;
+  final int questionCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      backgroundColor: Colors.white.withValues(alpha: 0.4),
+    );
+    return ListenableBuilder(
+      listenable: teams,
+      builder: (context, _) {
+        final selected = teams.selected;
+        return Column(
+          children: [
+            Text(
+              selected == null
+                  ? 'Create a team to start'
+                  : 'Playing as ${selected.name}',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleMedium
+                  ?.copyWith(color: brandNavy, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                OutlinedButton.icon(
+                  style: style,
+                  onPressed: () => showCreateTeamDialog(context, teams),
+                  icon: const Icon(Icons.group_add_outlined),
+                  label: const Text('Create team'),
+                ),
+                OutlinedButton.icon(
+                  style: style,
+                  onPressed: selected == null
+                      ? null
+                      : () => showSelectTeamDialog(
+                          context,
+                          teams,
+                          questionCount: questionCount,
+                        ),
+                  icon: const Icon(Icons.groups_outlined),
+                  label: const Text('Select team'),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

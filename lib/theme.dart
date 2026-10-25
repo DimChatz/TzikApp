@@ -50,6 +50,22 @@ ThemeData buildTheme() {
       filled: true,
       fillColor: Colors.white.withValues(alpha: 0.5),
     ),
+    // For pop-ups that don't use BrandDialog.
+    dialogTheme: const DialogThemeData(
+      backgroundColor: brandGreen,
+      titleTextStyle: TextStyle(
+        color: brandNavy,
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+      contentTextStyle: TextStyle(color: brandNavy, fontSize: 16),
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: brandNavy,
+      contentTextStyle: TextStyle(color: Colors.white),
+      actionTextColor: brandGreen,
+      behavior: SnackBarBehavior.floating,
+    ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: brandNavy,

@@ -1,4 +1,4 @@
-const appName = 'TzikApp';
+const appName = 'Aporia';
 
 /// Formspree form that "Propose a question" submissions are sent to.
 /// Formspree emails each submission to the address the form belongs to.

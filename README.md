@@ -1,4 +1,4 @@
-# TzikApp
+# Aporia
 An App with interesting questions to ask with your friend group for some constructive interesting boredom.
 
 Built with Flutter for Android and iOS.
@@ -7,12 +7,17 @@ Built with Flutter for Android and iOS.
 
 1. A splash screen loads the questions, downloading the latest list from this repo
    (see [Editing the questions](#editing-the-questions)).
-2. The home screen has a big **START** button. Tap it and the questions screen opens.
+2. The home screen has a big **START** button. Playing needs a team: use **Create team**
+   above it (START asks for one if there is none yet) and **Select team** to switch between
+   teams or delete one.
 3. Questions go in order of their number. Use **Previous** and **Next** (or swipe) to move
-   between them, or tap **Question N** at the top to jump straight to a number. Tap ♥ to
-   save a question to **Favourites**. Going back and pressing START again carries on where
-   you left off.
-4. **Propose a question** sends the proposal straight from the app. It arrives in your
+   between them, or tap the number in **Question N** at the top and type another to jump
+   straight to it. Tap ✓ to mark a question as played by the current team, and ♥ to save it
+   to **Favourites**.
+4. Every team goes through the questions on its own: a new team starts at question 1 with
+   nothing played, and going back to a team carries on where it left off. Teams are stored
+   on the device. Played questions are stored by their `index`.
+5. **Propose a question** sends the proposal straight from the app. It arrives in your
    inbox through [Formspree](https://formspree.io) (see [Setting up proposals](#setting-up-proposals)).
 
 ## Editing the questions
@@ -62,7 +67,7 @@ The ID still ends up inside the built app, which needs it to send proposals. Kee
 out of the repo just means it isn't published here. If the form ever gets spammed,
 create a new form in Formspree, delete the old one, and update `config.json`.
 
-Each email has the subject "TzikApp question proposal" and contains the question and,
+Each email has the subject "Aporia question proposal" and contains the question and,
 if given, the sender's name. If the app was built without the ID, tapping Send shows a
 "not set up" message.
 
@@ -120,7 +125,8 @@ branding/                     exported logo files and icon layers
 tool/render_logo_test.dart    re-exports branding/ from the code
 config.example.json           template for the git-ignored config.json (Formspree form ID)
 lib/screens/                  splash, home, questions, favourites, propose
-lib/services/                 loading questions, favourites, sending proposals
+lib/services/                 loading questions, favourites, teams, sending proposals
+lib/widgets/                  logo, branded pop-ups, team pop-ups
 tool/check_for_leaks.sh       blocks commits and pushes that would publish personal data
 .githooks/                    git hooks that run it
 test/                         tests

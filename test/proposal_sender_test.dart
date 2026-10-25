@@ -22,7 +22,7 @@ void main() {
     expect(sent.url.toString(), 'https://formspree.io/f/xyzabcde');
     expect(sent.headers['Accept'], 'application/json');
     expect(jsonDecode(sent.body), {
-      '_subject': 'TzikApp question proposal',
+      '_subject': 'Aporia question proposal',
       'question': 'Cats or dogs?',
       'name': 'Maria',
     });

@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "TzikApp",
+      "name": "Aporia",
       "request": "launch",
       "type": "dart",
       "args": ["--dart-define-from-file=config.json"]

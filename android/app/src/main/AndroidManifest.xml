@@ -2,7 +2,7 @@
     <!-- Needed to send question proposals. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="TzikApp"
+        android:label="Aporia"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
