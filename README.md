@@ -73,6 +73,24 @@ flutter build apk --dart-define-from-file=config.json   # Android
 flutter build ipa --dart-define-from-file=config.json   # iOS (on a Mac)
 ```
 
+## Keeping personal data out of this repo
+
+This repo is public, so three safeguards stop personal data and secrets from being published:
+
+- **Commit and push checks.** The hooks in `.githooks/` run `tool/check_for_leaks.sh`, which
+  blocks a commit or push that contains a real email address (in files, commit messages or
+  the commit's author details), passwords, keys or tokens, a Formspree form ID, or files such
+  as `.env`, `config.json` or signing keys. The push check also catches commits made with
+  `--no-verify`. Turn the hooks on once in every copy of the repo:
+  ```sh
+  git config core.hooksPath .githooks
+  ```
+  If something harmless gets blocked, add it to `ALLOWED` at the top of the script.
+- **`.gitignore`** keeps secret files (`config.json`, `.env`, signing keys) out of commits.
+- **GitHub push protection** (enabled in the repo settings) rejects pushes containing known
+  kinds of keys and tokens. It also covers edits made on the GitHub website, which don't run
+  the local hooks.
+
 ## Project layout
 
 ```
@@ -81,5 +99,7 @@ lib/config.dart               app name, questions download URL
 config.example.json           template for the git-ignored config.json (Formspree form ID)
 lib/screens/                  splash, home, question popup, favourites, propose
 lib/services/                 loading and shuffling questions, favourites, sending proposals
+tool/check_for_leaks.sh       blocks commits and pushes that would publish personal data
+.githooks/                    git hooks that run it
 test/                         tests
 ```

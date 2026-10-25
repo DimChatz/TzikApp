@@ -9,7 +9,7 @@ void main() {
   test('posts the proposal as JSON to the Formspree form', () async {
     late http.Request sent;
     final sender = ProposalSender(
-      formId: 'abc123',
+      formId: 'xyzabcde',
       client: MockClient((request) async {
         sent = request;
         return http.Response('{"ok":true}', 200);
@@ -19,7 +19,7 @@ void main() {
     await sender.send(question: 'Cats or dogs?', name: 'Maria');
 
     expect(sent.method, 'POST');
-    expect(sent.url.toString(), 'https://formspree.io/f/abc123');
+    expect(sent.url.toString(), 'https://formspree.io/f/xyzabcde');
     expect(sent.headers['Accept'], 'application/json');
     expect(jsonDecode(sent.body), {
       '_subject': 'TzikApp question proposal',
@@ -31,7 +31,7 @@ void main() {
   test('leaves out the name when none is given', () async {
     late http.Request sent;
     final sender = ProposalSender(
-      formId: 'abc123',
+      formId: 'xyzabcde',
       client: MockClient((request) async {
         sent = request;
         return http.Response('{"ok":true}', 200);
@@ -61,6 +61,6 @@ void main() {
 
   test('is not configured without a form ID', () {
     expect(ProposalSender(formId: '').isConfigured, isFalse);
-    expect(ProposalSender(formId: 'abc123').isConfigured, isTrue);
+    expect(ProposalSender(formId: 'xyzabcde').isConfigured, isTrue);
   });
 }
