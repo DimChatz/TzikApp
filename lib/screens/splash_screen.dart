@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import '../config.dart';
 import '../services/favourites_store.dart';
 import '../services/question_repository.dart';
+import '../theme.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/logo.dart';
 import 'home_screen.dart';
 
 const _minSplashTime = Duration(milliseconds: 1600);
@@ -67,16 +69,12 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.forum_rounded,
-                    size: 96,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(height: 16),
+                  const TzikLogo(size: 140),
+                  const SizedBox(height: 24),
                   Text(
                     appName,
                     style: textTheme.displayMedium?.copyWith(
-                      color: Colors.white,
+                      color: brandNavy,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -85,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     'Questions for constructive boredom',
                     textAlign: TextAlign.center,
                     style: textTheme.titleMedium?.copyWith(
-                      color: Colors.white70,
+                      color: brandNavy.withValues(alpha: 0.7),
                     ),
                   ),
                   if (_error != null) ...[
@@ -93,9 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     Text(
                       "Couldn't load the questions:\n$_error",
                       textAlign: TextAlign.center,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: textTheme.bodyMedium?.copyWith(color: brandNavy),
                     ),
                   ],
                 ],

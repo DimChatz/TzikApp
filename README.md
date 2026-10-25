@@ -73,6 +73,19 @@ flutter build apk --dart-define-from-file=config.json   # Android
 flutter build ipa --dart-define-from-file=config.json   # iOS (on a Mac)
 ```
 
+## Logo and app icon
+
+The logo is drawn in code in `lib/widgets/logo.dart`, with its colours in `lib/theme.dart`,
+so the app screens, the app icons and the exported files always match. `branding/` holds
+the exports: `logo.svg` (editable), `logo-1024.png` (for app stores), and the layers Android
+uses to fit the icon into different shapes. After changing the logo or its colours, run:
+
+```sh
+flutter test tool/render_logo_test.dart           # re-export branding/
+dart run flutter_launcher_icons                   # regenerate the Android and iOS icons
+git checkout ios/Runner.xcodeproj/project.pbxproj # undo an unwanted edit the previous step makes
+```
+
 ## Keeping personal data out of this repo
 
 This repo is public, so three safeguards stop personal data and secrets from being published:
@@ -96,6 +109,9 @@ This repo is public, so three safeguards stop personal data and secrets from bei
 ```
 assets/questions.json         the questions
 lib/config.dart               app name, questions download URL
+lib/widgets/logo.dart         the logo, drawn in code
+branding/                     exported logo files and icon layers
+tool/render_logo_test.dart    re-exports branding/ from the code
 config.example.json           template for the git-ignored config.json (Formspree form ID)
 lib/screens/                  splash, home, question popup, favourites, propose
 lib/services/                 loading and shuffling questions, favourites, sending proposals

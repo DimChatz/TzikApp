@@ -1,0 +1,4 @@
+# Keep shell scripts in Unix line endings so the leak checks also run from a
+# Windows checkout (Git for Windows converts to CRLF by default).
+*.sh text eol=lf
+.githooks/* text eol=lf

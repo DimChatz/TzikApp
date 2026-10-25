@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Start of the logo gradient (brandGreen in lib/theme.dart). -->
+    <color name="launch_background">#B9F5D0</color>
+</resources>

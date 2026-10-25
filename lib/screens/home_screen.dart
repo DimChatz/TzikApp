@@ -4,7 +4,9 @@ import '../config.dart';
 import '../models/question.dart';
 import '../services/favourites_store.dart';
 import '../services/question_repository.dart';
+import '../theme.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/logo.dart';
 import 'favourites_screen.dart';
 import 'propose_screen.dart';
 import 'question_dialog.dart';
@@ -39,8 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final actionStyle = OutlinedButton.styleFrom(
-      foregroundColor: Colors.white,
-      side: const BorderSide(color: Colors.white54),
+      foregroundColor: brandNavy,
+      side: BorderSide(color: brandNavy.withValues(alpha: 0.35)),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
     );
 
@@ -57,10 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       children: [
                         const Spacer(flex: 2),
+                        const TzikLogo(size: 72),
+                        const SizedBox(height: 16),
                         Text(
                           appName,
                           style: textTheme.displaySmall?.copyWith(
-                            color: Colors.white,
+                            color: brandNavy,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -69,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Questions & dilemmas to argue about\nwith your friends',
                           textAlign: TextAlign.center,
                           style: textTheme.titleMedium?.copyWith(
-                            color: Colors.white70,
+                            color: brandNavy.withValues(alpha: 0.7),
                           ),
                         ),
                         const Spacer(flex: 2),
@@ -158,10 +162,10 @@ class _StartButtonState extends State<_StartButton>
           onPressed: widget.onPressed,
           style: FilledButton.styleFrom(
             shape: const CircleBorder(),
-            backgroundColor: Colors.white,
-            foregroundColor: const Color(0xFF4527A0),
+            backgroundColor: brandNavy,
+            foregroundColor: Colors.white,
             elevation: 12,
-            shadowColor: Colors.black54,
+            shadowColor: brandNavy,
             textStyle: Theme.of(context).textTheme.headlineMedium
                 ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 3),
           ),
