@@ -1,0 +1,110 @@
+{
+  "@@locale": "en",
+
+  "languageCode": "EN",
+  "@languageCode": {
+    "description": "Short name of this language, shown on the language button."
+  },
+  "switchLanguage": "Αλλαγή σε Ελληνικά",
+  "@switchLanguage": {
+    "description": "Tooltip of the language button, written in the language it switches to."
+  },
+
+  "splashTagline": "Questions for constructive boredom",
+  "loadFailed": "Couldn't load the questions:\n{error}",
+  "@loadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "homeTagline": "Questions & dilemmas to argue about\nwith your friends",
+  "start": "START",
+  "createTeamToStart": "Create a team to start",
+  "playingAs": "Playing as {team}",
+  "@playingAs": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "createTeam": "Create team",
+  "selectTeam": "Select team",
+  "favourites": "Favourites",
+  "proposeQuestion": "Propose a question",
+
+  "question": "Question",
+  "@question": {
+    "description": "Title of the questions screen, followed by the question's number."
+  },
+  "noSuchQuestion": "There's no question {number}.",
+  "@noSuchQuestion": {
+    "placeholders": {
+      "number": { "type": "String" }
+    }
+  },
+  "playedCount": "{played} of {total} played",
+  "@playedCount": {
+    "placeholders": {
+      "played": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "played": "Played",
+  "previous": "Previous",
+  "next": "Next",
+  "markPlayed": "Mark as played",
+  "markNotPlayed": "Mark as not played",
+  "saveToFavourites": "Save to favourites",
+  "removeFromFavourites": "Remove from favourites",
+
+  "noFavourites": "No favourites yet.\nTap the heart on a question to save it here.",
+  "removedFromFavourites": "Removed from favourites",
+  "undo": "Undo",
+
+  "proposeIntro": "Got a great question or dilemma? Send it over and it might make it into the app.",
+  "yourQuestion": "Your question",
+  "questionHint": "Would you rather...",
+  "questionTooShort": "Please write at least 10 characters.",
+  "yourName": "Your name (optional)",
+  "send": "Send",
+  "sending": "Sending...",
+  "proposalSent": "Thanks! Your question was sent.",
+  "sendingNotSetUp": "Sending isn't set up yet: put your Formspree form ID in config.json and rebuild the app.",
+  "sendingRejected": "Couldn't send your question (error {code}). Please try again later.",
+  "@sendingRejected": {
+    "placeholders": {
+      "code": { "type": "int" }
+    }
+  },
+  "sendingOffline": "Couldn't send your question. Check your internet connection and try again.",
+
+  "newTeam": "New team",
+  "teamName": "Team name",
+  "teamNameHint": "Friday night crew",
+  "teamNameMissing": "Give your team a name.",
+  "teamNameTaken": "There is already a team called {team}.",
+  "@teamNameTaken": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "cancel": "Cancel",
+  "create": "Create",
+  "teams": "Teams",
+  "noTeams": "No teams yet.",
+  "deleteTeam": "Delete {team}",
+  "@deleteTeam": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "deleteTeamQuestion": "Delete {team}?",
+  "@deleteTeamQuestion": {
+    "placeholders": {
+      "team": { "type": "String" }
+    }
+  },
+  "deleteTeamWarning": "The questions this team played will be forgotten.",
+  "delete": "Delete",
+  "close": "Close"
+}

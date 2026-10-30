@@ -80,6 +80,7 @@ List<Question> parseQuestions(String source) {
     final entry = decoded[i];
     final index = entry is Map ? entry['index'] : null;
     final text = entry is Map ? entry['text'] : null;
+    final greekText = entry is Map ? entry['text_el'] : null;
     if (index is! int || index < 1) {
       throw FormatException(
         'Question #${i + 1} in the file needs an "index": a whole number '
@@ -94,7 +95,22 @@ List<Question> parseQuestions(String source) {
         'Question #${i + 1} in the file needs a non-empty "text".',
       );
     }
-    questions.add(Question(index: index, text: text.trim()));
+    if (greekText != null && greekText is! String) {
+      throw FormatException(
+        'Question #${i + 1} in the file has a "text_el" that is not text.',
+      );
+    }
+    // A question without a Greek version, or with an empty one, is shown in
+    // English.
+    questions.add(
+      Question(
+        index: index,
+        text: text.trim(),
+        greekText: greekText is String && greekText.trim().isNotEmpty
+            ? greekText.trim()
+            : null,
+      ),
+    );
   }
 
   if (questions.isEmpty) {

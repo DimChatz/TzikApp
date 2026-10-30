@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../config.dart';
+import '../l10n/app_localizations.dart';
 import '../services/favourites_store.dart';
+import '../services/language_store.dart';
 import '../services/question_repository.dart';
 import '../services/teams_store.dart';
 import '../theme.dart';
@@ -15,7 +17,9 @@ const _minSplashTime = Duration(milliseconds: 1600);
 /// Shows the logo while questions, favourites and teams load, then moves on to
 /// [HomeScreen].
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({super.key, required this.language});
+
+  final LanguageStore language;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -45,6 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
             questions: questions,
             favourites: favourites,
             teams: teams,
+            language: widget.language,
           ),
           transitionsBuilder: (_, animation, _, child) =>
               FadeTransition(opacity: animation, child: child),
@@ -58,6 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: GradientBackground(
         child: Center(
@@ -85,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Questions for constructive boredom',
+                    l10n.splashTagline,
                     textAlign: TextAlign.center,
                     style: textTheme.titleMedium?.copyWith(
                       color: brandNavy.withValues(alpha: 0.7),
@@ -94,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   if (_error != null) ...[
                     const SizedBox(height: 32),
                     Text(
-                      "Couldn't load the questions:\n$_error",
+                      l10n.loadFailed('$_error'),
                       textAlign: TextAlign.center,
                       style: textTheme.bodyMedium?.copyWith(color: brandNavy),
                     ),

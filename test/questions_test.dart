@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tzikapp/models/question.dart';
@@ -23,6 +24,16 @@ void main() {
       final duplicates = [
         for (final q in questions)
           if (!seen.add(q.text.toLowerCase())) q.text,
+      ];
+      expect(duplicates, isEmpty);
+    });
+
+    test('has no duplicate Greek questions', () {
+      final seen = <String>{};
+      final duplicates = [
+        for (final q in questions)
+          if (q.greekText != null && !seen.add(q.greekText!.toLowerCase()))
+            q.greekText,
       ];
       expect(duplicates, isEmpty);
     });
@@ -117,6 +128,36 @@ void main() {
 
     test('rejects an empty list', () {
       expect(() => parseQuestions('[]'), throwsFormatException);
+    });
+
+    test('reads the Greek version, which is optional', () {
+      final questions = parseQuestions('''
+        [
+          {"index": 1, "text": "Cats?", "text_el": "  Γάτες;  "},
+          {"index": 2, "text": "Dogs?"},
+          {"index": 3, "text": "Fish?", "text_el": ""}
+        ]
+      ''');
+      expect(questions.map((q) => q.greekText), ['Γάτες;', null, null]);
+      expect(questions.map((q) => q.textFor(const Locale('el'))), [
+        'Γάτες;',
+        'Dogs?',
+        'Fish?',
+      ]);
+      expect(questions.first.textFor(const Locale('en')), 'Cats?');
+    });
+
+    test('rejects a Greek version that is not text', () {
+      expect(
+        () => parseQuestions('[{"index": 1, "text": "A?", "text_el": 5}]'),
+        throwsA(
+          isA<FormatException>().having(
+            (e) => e.message,
+            'message',
+            contains('"text_el"'),
+          ),
+        ),
+      );
     });
   });
 }

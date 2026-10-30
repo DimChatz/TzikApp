@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tzikapp/main.dart';
 import 'package:tzikapp/models/question.dart';
 import 'package:tzikapp/screens/home_screen.dart';
 import 'package:tzikapp/screens/question_screen.dart';
 import 'package:tzikapp/services/favourites_store.dart';
+import 'package:tzikapp/services/language_store.dart';
 import 'package:tzikapp/services/teams_store.dart';
 
 const _questions = [
-  Question(index: 1, text: 'Cats or dogs?'),
+  Question(index: 1, text: 'Cats or dogs?', greekText: 'Γάτες ή σκύλοι;'),
   Question(index: 2, text: 'Mountains or sea?'),
-  Question(index: 5, text: 'Tea or coffee?'),
+  Question(index: 5, text: 'Tea or coffee?', greekText: 'Τσάι ή καφές;'),
 ];
 
 // The START button pulses forever, so pumpAndSettle would never settle.
@@ -23,22 +25,26 @@ Future<void> _animate(WidgetTester tester) async {
 void main() {
   late FavouritesStore favourites;
   late TeamsStore teams;
+  late LanguageStore language;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     favourites = await FavouritesStore.load();
     teams = await TeamsStore.load();
+    language = await LanguageStore.load(phoneLocale: const Locale('en'));
   });
 
   /// Starts with a team called Friends unless [withTeam] is false.
   Future<void> pumpHome(WidgetTester tester, {bool withTeam = true}) async {
     if (withTeam) await teams.create('Friends');
     await tester.pumpWidget(
-      MaterialApp(
+      AporiaApp(
+        language: language,
         home: HomeScreen(
           questions: _questions,
           favourites: favourites,
           teams: teams,
+          language: language,
         ),
       ),
     );
@@ -190,6 +196,44 @@ void main() {
     await tapAndAnimate(tester, find.byType(BackButton));
     await tapAndAnimate(tester, find.text('Favourites'));
     expect(find.text('Cats or dogs?'), findsOneWidget);
+  });
+
+  testWidgets('the globe switches the app and the questions to Greek', (
+    tester,
+  ) async {
+    await pumpHome(tester);
+    await tapAndAnimate(tester, find.byIcon(Icons.language));
+    expect(find.text('ΠΑΜΕ'), findsOneWidget);
+    expect(find.text('Παίζει η ομάδα Friends'), findsOneWidget);
+
+    await tapAndAnimate(tester, find.text('ΠΑΜΕ'));
+    expect(find.text('Ερώτηση '), findsOneWidget);
+    expect(find.text('Γάτες ή σκύλοι;'), findsOneWidget);
+    expect(find.text('Friends · Παίχτηκαν 0 από 3'), findsOneWidget);
+
+    // A question without a Greek version is shown in English.
+    await tapAndAnimate(tester, find.text('Επόμενη'));
+    expect(find.text('Mountains or sea?'), findsOneWidget);
+
+    // Switching back on the questions screen keeps your place.
+    await tapAndAnimate(tester, find.byIcon(Icons.language));
+    expect(find.text('Question '), findsOneWidget);
+    expect(shownNumber(tester), '2');
+    expect(language.isGreek, isFalse);
+  });
+
+  testWidgets('a favourite saved in Greek shows in Greek', (tester) async {
+    await pumpHome(tester);
+    await tapAndAnimate(tester, find.byIcon(Icons.language));
+    await tapAndAnimate(tester, find.text('ΠΑΜΕ'));
+    await tapAndAnimate(tester, find.byTooltip('Αποθήκευση στα αγαπημένα'));
+
+    // Saved by its English text, so the heart works in both languages.
+    expect(favourites.items, ['Cats or dogs?']);
+
+    await tapAndAnimate(tester, find.byType(BackButton));
+    await tapAndAnimate(tester, find.text('Αγαπημένα'));
+    expect(find.text('Γάτες ή σκύλοι;'), findsOneWidget);
   });
 
   testWidgets('propose screen validates before sending', (tester) async {

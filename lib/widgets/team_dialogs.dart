@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/team.dart';
 import '../services/teams_store.dart';
 import '../theme.dart';
@@ -42,11 +43,12 @@ class _CreateTeamDialogState extends State<_CreateTeamDialog> {
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context);
     final name = _name.text.trim();
     final error = name.isEmpty
-        ? 'Give your team a name.'
+        ? l10n.teamNameMissing
         : widget.teams.hasName(name)
-        ? 'There is already a team called $name.'
+        ? l10n.teamNameTaken(name)
         : null;
     if (error != null) {
       setState(() => _error = error);
@@ -58,8 +60,9 @@ class _CreateTeamDialogState extends State<_CreateTeamDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BrandDialog(
-      title: 'New team',
+      title: l10n.newTeam,
       content: TextField(
         controller: _name,
         autofocus: true,
@@ -68,8 +71,8 @@ class _CreateTeamDialogState extends State<_CreateTeamDialog> {
         textInputAction: TextInputAction.done,
         onSubmitted: (_) => _submit(),
         decoration: InputDecoration(
-          labelText: 'Team name',
-          hintText: 'Friday night crew',
+          labelText: l10n.teamName,
+          hintText: l10n.teamNameHint,
           errorText: _error,
           border: const OutlineInputBorder(),
         ),
@@ -77,9 +80,9 @@ class _CreateTeamDialogState extends State<_CreateTeamDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Create')),
+        FilledButton(onPressed: _submit, child: Text(l10n.create)),
       ],
     );
   }
@@ -92,22 +95,23 @@ class _SelectTeamDialog extends StatelessWidget {
   final int questionCount;
 
   Future<void> _delete(BuildContext context, Team team) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => BrandDialog(
-        title: 'Delete ${team.name}?',
-        content: const Text(
-          'The questions this team played will be forgotten.',
-          style: TextStyle(color: brandNavy, fontSize: 16),
+        title: l10n.deleteTeamQuestion(team.name),
+        content: Text(
+          l10n.deleteTeamWarning,
+          style: const TextStyle(color: brandNavy, fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -117,17 +121,18 @@ class _SelectTeamDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BrandDialog(
-      title: 'Teams',
+      title: l10n.teams,
       content: ListenableBuilder(
         listenable: teams,
         builder: (context, _) {
           final all = teams.teams;
           final selected = teams.selected;
           if (all.isEmpty) {
-            return const Text(
-              'No teams yet.',
-              style: TextStyle(color: brandNavy, fontSize: 16),
+            return Text(
+              l10n.noTeams,
+              style: const TextStyle(color: brandNavy, fontSize: 16),
             );
           }
           return ListView.separated(
@@ -162,10 +167,10 @@ class _SelectTeamDialog extends StatelessWidget {
                     ),
                   ),
                   subtitle: Text(
-                    '${team.played.length} of $questionCount played',
+                    l10n.playedCount(team.played.length, questionCount),
                   ),
                   trailing: IconButton(
-                    tooltip: 'Delete ${team.name}',
+                    tooltip: l10n.deleteTeam(team.name),
                     onPressed: () => _delete(context, team),
                     icon: const Icon(Icons.delete_outline),
                   ),
@@ -182,7 +187,7 @@ class _SelectTeamDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: Text(l10n.close),
         ),
       ],
     );

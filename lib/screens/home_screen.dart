@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../config.dart';
+import '../l10n/app_localizations.dart';
 import '../models/question.dart';
 import '../services/favourites_store.dart';
+import '../services/language_store.dart';
 import '../services/teams_store.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/language_button.dart';
 import '../widgets/logo.dart';
 import '../widgets/team_dialogs.dart';
 import 'favourites_screen.dart';
@@ -18,11 +21,13 @@ class HomeScreen extends StatefulWidget {
     required this.questions,
     required this.favourites,
     required this.teams,
+    required this.language,
   });
 
   final List<Question> questions;
   final FavouritesStore favourites;
   final TeamsStore teams;
+  final LanguageStore language;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           favourites: widget.favourites,
           teams: widget.teams,
           team: team,
+          language: widget.language,
         ),
         transitionsBuilder: (_, animation, _, child) => FadeTransition(
           opacity: animation,
@@ -64,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     final actionStyle = OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
     );
@@ -71,81 +78,96 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: GradientBackground(
         child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: [
-                        const Spacer(flex: 2),
-                        const AporiaLogo(size: 72),
-                        const SizedBox(height: 16),
-                        Text(
-                          appName,
-                          style: textTheme.displaySmall?.copyWith(
-                            color: brandNavy,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Questions & dilemmas to argue about\nwith your friends',
-                          textAlign: TextAlign.center,
-                          style: textTheme.titleMedium?.copyWith(
-                            color: brandNavy.withValues(alpha: 0.7),
-                          ),
-                        ),
-                        const Spacer(flex: 2),
-                        _TeamPicker(
-                          teams: widget.teams,
-                          questionCount: widget.questions.length,
-                        ),
-                        const SizedBox(height: 28),
-                        _StartButton(onPressed: _start),
-                        const SizedBox(height: 24),
-                        const Spacer(flex: 3),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 12,
-                          runSpacing: 12,
+          // The language button floats in the corner so it doesn't push the
+          // rest down.
+          child: Stack(
+            children: [
+              LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
                           children: [
-                            ListenableBuilder(
-                              listenable: widget.favourites,
-                              builder: (context, _) {
-                                final count = widget.favourites.items.length;
-                                return OutlinedButton.icon(
-                                  style: actionStyle,
-                                  onPressed: () => _open(
-                                    FavouritesScreen(
-                                      favourites: widget.favourites,
-                                    ),
-                                  ),
-                                  icon: Badge(
-                                    isLabelVisible: count > 0,
-                                    label: Text('$count'),
-                                    child: const Icon(Icons.favorite),
-                                  ),
-                                  label: const Text('Favourites'),
-                                );
-                              },
+                            const Spacer(flex: 2),
+                            const AporiaLogo(size: 72),
+                            const SizedBox(height: 16),
+                            Text(
+                              appName,
+                              style: textTheme.displaySmall?.copyWith(
+                                color: brandNavy,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            OutlinedButton.icon(
-                              style: actionStyle,
-                              onPressed: () => _open(const ProposeScreen()),
-                              icon: const Icon(Icons.lightbulb_outline),
-                              label: const Text('Propose a question'),
+                            const SizedBox(height: 8),
+                            Text(
+                              l10n.homeTagline,
+                              textAlign: TextAlign.center,
+                              style: textTheme.titleMedium?.copyWith(
+                                color: brandNavy.withValues(alpha: 0.7),
+                              ),
+                            ),
+                            const Spacer(flex: 2),
+                            _TeamPicker(
+                              teams: widget.teams,
+                              questionCount: widget.questions.length,
+                            ),
+                            const SizedBox(height: 28),
+                            _StartButton(onPressed: _start),
+                            const SizedBox(height: 24),
+                            const Spacer(flex: 3),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: [
+                                ListenableBuilder(
+                                  listenable: widget.favourites,
+                                  builder: (context, _) {
+                                    final count =
+                                        widget.favourites.items.length;
+                                    return OutlinedButton.icon(
+                                      style: actionStyle,
+                                      onPressed: () => _open(
+                                        FavouritesScreen(
+                                          favourites: widget.favourites,
+                                          questions: widget.questions,
+                                        ),
+                                      ),
+                                      icon: Badge(
+                                        isLabelVisible: count > 0,
+                                        label: Text('$count'),
+                                        child: const Icon(Icons.favorite),
+                                      ),
+                                      label: Text(l10n.favourites),
+                                    );
+                                  },
+                                ),
+                                OutlinedButton.icon(
+                                  style: actionStyle,
+                                  onPressed: () => _open(const ProposeScreen()),
+                                  icon: const Icon(Icons.lightbulb_outline),
+                                  label: Text(l10n.proposeQuestion),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: LanguageButton(language: widget.language),
+              ),
+            ],
           ),
         ),
       ),
@@ -166,6 +188,7 @@ class _TeamPicker extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       backgroundColor: Colors.white.withValues(alpha: 0.4),
     );
+    final l10n = AppLocalizations.of(context);
     return ListenableBuilder(
       listenable: teams,
       builder: (context, _) {
@@ -174,8 +197,8 @@ class _TeamPicker extends StatelessWidget {
           children: [
             Text(
               selected == null
-                  ? 'Create a team to start'
-                  : 'Playing as ${selected.name}',
+                  ? l10n.createTeamToStart
+                  : l10n.playingAs(selected.name),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium
                   ?.copyWith(color: brandNavy, fontWeight: FontWeight.w600),
@@ -190,7 +213,7 @@ class _TeamPicker extends StatelessWidget {
                   style: style,
                   onPressed: () => showCreateTeamDialog(context, teams),
                   icon: const Icon(Icons.group_add_outlined),
-                  label: const Text('Create team'),
+                  label: Text(l10n.createTeam),
                 ),
                 OutlinedButton.icon(
                   style: style,
@@ -202,7 +225,7 @@ class _TeamPicker extends StatelessWidget {
                           questionCount: questionCount,
                         ),
                   icon: const Icon(Icons.groups_outlined),
-                  label: const Text('Select team'),
+                  label: Text(l10n.selectTeam),
                 ),
               ],
             ),
@@ -256,7 +279,7 @@ class _StartButtonState extends State<_StartButton>
             textStyle: Theme.of(context).textTheme.headlineMedium
                 ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 3),
           ),
-          child: const Text('START'),
+          child: Text(AppLocalizations.of(context).start),
         ),
       ),
     );

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/question.dart';
 import '../models/team.dart';
 import '../services/favourites_store.dart';
+import '../services/language_store.dart';
 import '../services/teams_store.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/language_button.dart';
 
 /// Shows the questions one at a time, in index order, for one team. Swipe or
 /// use Previous/Next to move through them, or type a number in the title to
@@ -18,6 +21,7 @@ class QuestionScreen extends StatefulWidget {
     required this.favourites,
     required this.teams,
     required this.team,
+    required this.language,
   });
 
   /// Sorted by index, as [parseQuestions] returns them.
@@ -28,6 +32,8 @@ class QuestionScreen extends StatefulWidget {
   /// The team playing. The screen opens where it left off and remembers
   /// where it gets to and which questions it played.
   final Team team;
+
+  final LanguageStore language;
 
   @override
   State<QuestionScreen> createState() => _QuestionScreenState();
@@ -69,6 +75,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context);
     final outlined = IconButton.styleFrom(
       side: BorderSide(color: brandNavy.withValues(alpha: 0.35)),
     );
@@ -76,7 +84,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
     return GradientScaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: _QuestionNumber(index: _question.index, onSubmitted: _goTo),
+        // Shrinks rather than overflowing next to the language button on
+        // narrow phones or with large text.
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: _QuestionNumber(index: _question.index, onSubmitted: _goTo),
+        ),
+        actions: [LanguageButton(language: widget.language)],
       ),
       body: SafeArea(
         top: false,
@@ -87,8 +101,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
             return Column(
               children: [
                 Text(
-                  '${widget.team.name} · ${played.length} of '
-                  '${widget.questions.length} played',
+                  '${widget.team.name} · '
+                  '${l10n.playedCount(played.length, widget.questions.length)}',
                   style: textTheme.titleSmall?.copyWith(
                     color: brandNavy.withValues(alpha: 0.7),
                   ),
@@ -106,7 +120,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           child: Column(
                             children: [
                               Text(
-                                question.text,
+                                question.textFor(locale),
                                 textAlign: TextAlign.center,
                                 style: textTheme.headlineMedium?.copyWith(
                                   color: brandNavy,
@@ -115,9 +129,12 @@ class _QuestionScreenState extends State<QuestionScreen> {
                               ),
                               if (played.contains(question.index)) ...[
                                 const SizedBox(height: 20),
-                                const Chip(
-                                  avatar: Icon(Icons.check, color: brandNavy),
-                                  label: Text('Played'),
+                                Chip(
+                                  avatar: const Icon(
+                                    Icons.check,
+                                    color: brandNavy,
+                                  ),
+                                  label: Text(l10n.played),
                                   backgroundColor: Colors.white54,
                                   side: BorderSide.none,
                                 ),
@@ -141,7 +158,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                           icon: const Icon(Icons.arrow_back),
-                          label: const _OneLine('Previous'),
+                          label: _OneLine(l10n.previous),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -158,7 +175,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           ),
                           icon: const Icon(Icons.arrow_forward),
                           iconAlignment: IconAlignment.end,
-                          label: const _OneLine('Next'),
+                          label: _OneLine(l10n.next),
                         ),
                       ),
                     ],
@@ -173,7 +190,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
   }
 
   Widget _playedButton(bool played, ButtonStyle style) => IconButton.outlined(
-    tooltip: played ? 'Mark as not played' : 'Mark as played',
+    tooltip: played
+        ? AppLocalizations.of(context).markNotPlayed
+        : AppLocalizations.of(context).markPlayed,
     iconSize: 28,
     style: style,
     onPressed: () => widget.teams.togglePlayed(widget.team, _question.index),
@@ -186,9 +205,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
   Widget _favouriteButton(ButtonStyle style) => ListenableBuilder(
     listenable: widget.favourites,
     builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
       final saved = widget.favourites.contains(_question.text);
       return IconButton.outlined(
-        tooltip: saved ? 'Remove from favourites' : 'Save to favourites',
+        tooltip: saved ? l10n.removeFromFavourites : l10n.saveToFavourites,
         iconSize: 28,
         style: style,
         onPressed: () => widget.favourites.toggle(_question.text),
@@ -288,7 +308,9 @@ class _QuestionNumberState extends State<_QuestionNumber> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            SnackBar(content: Text("There's no question $typed.")),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).noSuchQuestion(typed)),
+            ),
           );
       }
     }
@@ -302,7 +324,7 @@ class _QuestionNumberState extends State<_QuestionNumber> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Question ', style: style),
+        Text('${AppLocalizations.of(context).question} ', style: style),
         GestureDetector(
           onTap: _focus.requestFocus,
           child: Container(
