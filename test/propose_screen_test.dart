@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:tzikapp/l10n/app_localizations.dart';
 import 'package:tzikapp/screens/propose_screen.dart';
 import 'package:tzikapp/services/proposal_sender.dart';
 
@@ -19,6 +20,8 @@ ProposalSender _formspreeReplying(int status, List<String> sentBodies) =>
 Future<void> _openAndSubmit(WidgetTester tester, ProposalSender sender) async {
   await tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Builder(
         builder: (context) => Scaffold(
           body: TextButton(

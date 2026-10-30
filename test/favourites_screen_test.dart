@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tzikapp/l10n/app_localizations.dart';
 import 'package:tzikapp/screens/favourites_screen.dart';
 import 'package:tzikapp/services/favourites_store.dart';
 
@@ -19,12 +20,17 @@ void main() {
   Future<void> openAndRemove(WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
             body: TextButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(
-                  builder: (_) => FavouritesScreen(favourites: favourites),
+                  builder: (_) => FavouritesScreen(
+                    favourites: favourites,
+                    questions: const [],
+                  ),
                 ),
               ),
               child: const Text('Open'),

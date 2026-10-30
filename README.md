@@ -19,6 +19,10 @@ Built with Flutter for Android and iOS.
    on the device. Played questions are stored by their `index`.
 5. **Propose a question** sends the proposal straight from the app. It arrives in your
    inbox through [Formspree](https://formspree.io) (see [Setting up proposals](#setting-up-proposals)).
+6. The app is in English and Greek. The 🌐 button (top right of the home screen and of the
+   questions screen) shows the current language, **EN** or **ΕΛ**, and switches to the other.
+   The app starts in the phone's language (Greek on a phone set to Greek, otherwise English)
+   and remembers the choice once you switch.
 
 ## Editing the questions
 
@@ -26,11 +30,14 @@ All questions live in [`assets/questions.json`](assets/questions.json), one per 
 
 ```json
 [
-  { "index": 1, "text": "Would you rather explore deep space or the deep ocean?" },
-  { "index": 2, "text": "Is free will real, or are we just very complicated dominoes?" }
+  { "index": 1, "text": "Would you rather explore deep space or the deep ocean?", "text_el": "Θα προτιμούσες να εξερευνήσεις τα βάθη του διαστήματος ή τα βάθη του ωκεανού;" },
+  { "index": 2, "text": "Is free will real, or are we just very complicated dominoes?", "text_el": "Υπάρχει ελεύθερη βούληση ή είμαστε απλώς πολύ περίπλοκα ντόμινο;" }
 ]
 ```
 
+- `text` is the question in English and `text_el` in Greek. Give every new question both.
+  A question without `text_el` (or with an empty one) is shown in English when the app is
+  in Greek. Greek questions end with `;`, the Greek question mark.
 - Every question needs an `index`: its number in the app, a whole number counting from 1.
   Each number can only be used once. The app shows questions in order of their index,
   whatever their order in the file. Gaps are allowed, so removing a question doesn't
@@ -48,8 +55,16 @@ All questions live in [`assets/questions.json`](assets/questions.json), one per 
   your edit, run `flutter test`: it verifies the file is valid JSON with no duplicate questions or indexes.
 - The download address is `questionsUrl` in `lib/config.dart`.
 
-Favourites are stored on the device by question text, so a favourite stays even if
-you later edit or remove that question.
+Favourites are stored on the device by their English `text`, so a favourite shows in
+whichever language the app is in, and stays even if you later remove that question. If you
+edit a question's English `text`, favourites saved before the edit keep the old wording.
+
+## Changing the app's texts
+
+The app's own words (buttons, titles, messages) are in [`lib/l10n/app_en.arb`](lib/l10n/app_en.arb)
+(English) and [`lib/l10n/app_el.arb`](lib/l10n/app_el.arb) (Greek). Change a text in both
+files under the same name, then run `flutter gen-l10n` to update the generated
+`lib/l10n/app_localizations*.dart` files. Commit those too, and don't edit them by hand.
 
 ## Setting up proposals
 
@@ -130,9 +145,10 @@ lib/widgets/logo.dart         the logo, drawn in code
 branding/                     exported logo files and icon layers
 tool/render_logo_test.dart    re-exports branding/ from the code
 config.example.json           template for the git-ignored config.json (Formspree form ID)
+lib/l10n/                     the app's texts in English and Greek
 lib/screens/                  splash, home, questions, favourites, propose
-lib/services/                 loading questions, favourites, teams, sending proposals
-lib/widgets/                  logo, branded pop-ups, team pop-ups
+lib/services/                 loading questions, favourites, teams, language, sending proposals
+lib/widgets/                  logo, branded pop-ups, team pop-ups, language button
 tool/check_for_leaks.sh       blocks commits and pushes that would publish personal data
 .githooks/                    git hooks that run it
 test/                         tests

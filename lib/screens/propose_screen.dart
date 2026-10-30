@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../services/proposal_sender.dart';
 import '../widgets/gradient_background.dart';
 
@@ -29,16 +30,10 @@ class _ProposeScreenState extends State<ProposeScreen> {
 
   Future<void> _send() async {
     if (!_formKey.currentState!.validate()) return;
+    final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
     if (!_sender.isConfigured) {
-      messenger.showSnackBar(
-        const SnackBar(
-          content: Text(
-            "Sending isn't set up yet: put your Formspree form ID in "
-            'config.json and rebuild the app.',
-          ),
-        ),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.sendingNotSetUp)));
       return;
     }
 
@@ -50,9 +45,7 @@ class _ProposeScreenState extends State<ProposeScreen> {
         name: _name.text.trim(),
       );
       if (!mounted) return;
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Thanks! Your question was sent.')),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.proposalSent)));
       Navigator.of(context).pop();
     } on Exception catch (e) {
       debugPrint('Sending proposal failed: $e');
@@ -63,10 +56,8 @@ class _ProposeScreenState extends State<ProposeScreen> {
           content: Text(
             // Formspree answering with an error isn't a connection problem.
             e is ProposalException
-                ? "Couldn't send your question (error ${e.statusCode}). "
-                      'Please try again later.'
-                : "Couldn't send your question. Check your internet "
-                      'connection and try again.',
+                ? l10n.sendingRejected(e.statusCode)
+                : l10n.sendingOffline,
           ),
         ),
       );
@@ -76,19 +67,16 @@ class _ProposeScreenState extends State<ProposeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return GradientScaffold(
-      appBar: AppBar(title: const Text('Propose a question')),
+      appBar: AppBar(title: Text(l10n.proposeQuestion)),
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              Text(
-                'Got a great question or dilemma? Send it over and it might '
-                'make it into the app.',
-                style: theme.textTheme.bodyLarge,
-              ),
+              Text(l10n.proposeIntro, style: theme.textTheme.bodyLarge),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _question,
@@ -97,14 +85,14 @@ class _ProposeScreenState extends State<ProposeScreen> {
                 maxLines: 8,
                 maxLength: 500,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Your question',
-                  hintText: 'Would you rather...',
+                decoration: InputDecoration(
+                  labelText: l10n.yourQuestion,
+                  hintText: l10n.questionHint,
                   alignLabelWithHint: true,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) => (value ?? '').trim().length < 10
-                    ? 'Please write at least 10 characters.'
+                    ? l10n.questionTooShort
                     : null,
               ),
               const SizedBox(height: 12),
@@ -113,9 +101,9 @@ class _ProposeScreenState extends State<ProposeScreen> {
                 enabled: !_sending,
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.done,
-                decoration: const InputDecoration(
-                  labelText: 'Your name (optional)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.yourName,
+                  border: const OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 24),
@@ -130,7 +118,7 @@ class _ProposeScreenState extends State<ProposeScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.send),
-                label: Text(_sending ? 'Sending...' : 'Send'),
+                label: Text(_sending ? l10n.sending : l10n.send),
               ),
             ],
           ),
