@@ -65,8 +65,32 @@ void main() {
     expect(find.text('Send'), findsOneWidget);
   });
 
+  testWidgets('blames Formspree, not the internet, when it says no', (
+    tester,
+  ) async {
+    await _openAndSubmit(tester, _formspreeReplying(404, []));
+
+    expect(find.textContaining('(error 404)'), findsOneWidget);
+    expect(find.textContaining('internet'), findsNothing);
+  });
+
+  testWidgets('blames the internet when Formspree can\'t be reached', (
+    tester,
+  ) async {
+    final offline = ProposalSender(
+      formId: 'xyzabcde',
+      client: MockClient(
+        (_) async => throw http.ClientException('Failed host lookup'),
+      ),
+    );
+    await _openAndSubmit(tester, offline);
+
+    expect(find.textContaining('internet connection'), findsOneWidget);
+    expect(find.byType(ProposeScreen), findsOneWidget);
+  });
+
   testWidgets('explains when sending is not set up', (tester) async {
-    await _openAndSubmit(tester, ProposalSender(formId: ''));
+    await _openAndSubmit(tester, ProposalSender(formId: 'your-form-id'));
 
     expect(find.textContaining("isn't set up"), findsOneWidget);
     expect(find.byType(ProposeScreen), findsOneWidget);

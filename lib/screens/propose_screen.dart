@@ -34,7 +34,8 @@ class _ProposeScreenState extends State<ProposeScreen> {
       messenger.showSnackBar(
         const SnackBar(
           content: Text(
-            "Sending isn't set up yet: add formspreeFormId in lib/config.dart.",
+            "Sending isn't set up yet: put your Formspree form ID in "
+            'config.json and rebuild the app.',
           ),
         ),
       );
@@ -58,10 +59,14 @@ class _ProposeScreenState extends State<ProposeScreen> {
       if (!mounted) return;
       setState(() => _sending = false);
       messenger.showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            "Couldn't send your question. Check your internet connection "
-            'and try again.',
+            // Formspree answering with an error isn't a connection problem.
+            e is ProposalException
+                ? "Couldn't send your question (error ${e.statusCode}). "
+                      'Please try again later.'
+                : "Couldn't send your question. Check your internet "
+                      'connection and try again.',
           ),
         ),
       );

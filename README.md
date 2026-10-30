@@ -68,8 +68,14 @@ out of the repo just means it isn't published here. If the form ever gets spamme
 create a new form in Formspree, delete the old one, and update `config.json`.
 
 Each email has the subject "Aporia question proposal" and contains the question and,
-if given, the sender's name. If the app was built without the ID, tapping Send shows a
-"not set up" message.
+if given, the sender's name. If the app was built without the ID, or with a placeholder
+like `your-form-id` still in `config.json`, tapping Send shows a "not set up" message.
+After changing `config.json`, stop the app and run it again: hot reload doesn't pick it up.
+
+If sending fails, the message says why. "Check your internet connection" means Formspree
+couldn't be reached. An error number means Formspree turned the proposal down (404: the
+form ID is wrong). When running from your computer, the debug console shows Formspree's
+full answer after "Sending proposal failed".
 
 ## Running and building
 

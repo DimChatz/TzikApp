@@ -63,4 +63,14 @@ void main() {
     expect(ProposalSender(formId: '').isConfigured, isFalse);
     expect(ProposalSender(formId: 'xyzabcde').isConfigured, isTrue);
   });
+
+  test('is not configured with a placeholder instead of a form ID', () {
+    for (final placeholder in ['your-form-id', 'PASTE-ID-HERE', 'my id']) {
+      expect(
+        ProposalSender(formId: placeholder).isConfigured,
+        isFalse,
+        reason: placeholder,
+      );
+    }
+  });
 }
