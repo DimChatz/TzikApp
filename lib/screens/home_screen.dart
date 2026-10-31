@@ -10,6 +10,7 @@ import '../theme.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/language_button.dart';
 import '../widgets/logo.dart';
+import '../widgets/same_size_text.dart';
 import '../widgets/team_dialogs.dart';
 import 'favourites_screen.dart';
 import 'propose_screen.dart';
@@ -70,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final l10n = AppLocalizations.of(context);
     final actionStyle = OutlinedButton.styleFrom(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
     );
@@ -81,6 +81,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // The language button floats in the corner so it doesn't push the
           // rest down.
           child: Stack(
+            // Full width, so the rest stays centred whatever its width.
+            fit: StackFit.expand,
             children: [
               LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
@@ -104,8 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              l10n.homeTagline,
+                            SameSizeText(
+                              (l10n) => l10n.homeTagline,
                               textAlign: TextAlign.center,
                               style: textTheme.titleMedium?.copyWith(
                                 color: brandNavy.withValues(alpha: 0.7),
@@ -143,7 +145,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         label: Text('$count'),
                                         child: const Icon(Icons.favorite),
                                       ),
-                                      label: Text(l10n.favourites),
+                                      label: SameSizeText(
+                                        (l10n) => l10n.favourites,
+                                      ),
                                     );
                                   },
                                 ),
@@ -151,7 +155,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style: actionStyle,
                                   onPressed: () => _open(const ProposeScreen()),
                                   icon: const Icon(Icons.lightbulb_outline),
-                                  label: Text(l10n.proposeQuestion),
+                                  label: SameSizeText(
+                                    (l10n) => l10n.proposeQuestion,
+                                  ),
                                 ),
                               ],
                             ),
@@ -188,15 +194,14 @@ class _TeamPicker extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       backgroundColor: Colors.white.withValues(alpha: 0.4),
     );
-    final l10n = AppLocalizations.of(context);
     return ListenableBuilder(
       listenable: teams,
       builder: (context, _) {
         final selected = teams.selected;
         return Column(
           children: [
-            Text(
-              selected == null
+            SameSizeText(
+              (l10n) => selected == null
                   ? l10n.createTeamToStart
                   : l10n.playingAs(selected.name),
               textAlign: TextAlign.center,
@@ -213,7 +218,7 @@ class _TeamPicker extends StatelessWidget {
                   style: style,
                   onPressed: () => showCreateTeamDialog(context, teams),
                   icon: const Icon(Icons.group_add_outlined),
-                  label: Text(l10n.createTeam),
+                  label: SameSizeText((l10n) => l10n.createTeam),
                 ),
                 OutlinedButton.icon(
                   style: style,
@@ -225,7 +230,7 @@ class _TeamPicker extends StatelessWidget {
                           questionCount: questionCount,
                         ),
                   icon: const Icon(Icons.groups_outlined),
-                  label: Text(l10n.selectTeam),
+                  label: SameSizeText((l10n) => l10n.selectTeam),
                 ),
               ],
             ),

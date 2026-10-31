@@ -5,6 +5,7 @@ import '../models/team.dart';
 import '../services/teams_store.dart';
 import '../theme.dart';
 import 'brand_dialog.dart';
+import 'same_size_text.dart';
 
 /// Asks for a name and creates the team. Returns it, or null if cancelled.
 Future<Team?> showCreateTeamDialog(BuildContext context, TeamsStore teams) =>
@@ -80,9 +81,12 @@ class _CreateTeamDialogState extends State<_CreateTeamDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
+          child: SameSizeText((l10n) => l10n.cancel),
         ),
-        FilledButton(onPressed: _submit, child: Text(l10n.create)),
+        FilledButton(
+          onPressed: _submit,
+          child: SameSizeText((l10n) => l10n.create),
+        ),
       ],
     );
   }
@@ -107,11 +111,11 @@ class _SelectTeamDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
+            child: SameSizeText((l10n) => l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(l10n.delete),
+            child: SameSizeText((l10n) => l10n.delete),
           ),
         ],
       ),
@@ -187,7 +191,7 @@ class _SelectTeamDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.close),
+          child: SameSizeText((l10n) => l10n.close),
         ),
       ],
     );

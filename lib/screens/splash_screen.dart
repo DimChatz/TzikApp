@@ -10,6 +10,7 @@ import '../services/teams_store.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/logo.dart';
+import '../widgets/same_size_text.dart';
 import 'home_screen.dart';
 
 const _minSplashTime = Duration(milliseconds: 1600);
@@ -90,8 +91,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    l10n.splashTagline,
+                  SameSizeText(
+                    (l10n) => l10n.splashTagline,
                     textAlign: TextAlign.center,
                     style: textTheme.titleMedium?.copyWith(
                       color: brandNavy.withValues(alpha: 0.7),

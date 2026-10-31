@@ -158,7 +158,7 @@ void main() {
     await pumpHome(tester);
     await tapAndAnimate(tester, find.text('START'));
     await tapAndAnimate(tester, find.byTooltip('Mark as played'));
-    expect(find.text('Played'), findsOneWidget);
+    expect(find.byTooltip('Mark as not played'), findsOneWidget);
     expect(find.text('Friends · 1 of 3 played'), findsOneWidget);
     await tapAndAnimate(tester, find.text('Next'));
     await tapAndAnimate(tester, find.byType(BackButton));
@@ -170,7 +170,7 @@ void main() {
     expect(find.text('Playing as Family'), findsOneWidget);
     await tapAndAnimate(tester, find.text('START'));
     expect(shownNumber(tester), '1');
-    expect(find.text('Played'), findsNothing);
+    expect(find.byTooltip('Mark as played'), findsOneWidget);
     await tapAndAnimate(tester, find.byType(BackButton));
 
     // Switching back carries on where Friends left off.
@@ -181,7 +181,7 @@ void main() {
     await tapAndAnimate(tester, find.text('START'));
     expect(shownNumber(tester), '2');
     await tapAndAnimate(tester, find.text('Previous'));
-    expect(find.text('Played'), findsOneWidget);
+    expect(find.byTooltip('Mark as not played'), findsOneWidget);
   });
 
   testWidgets('heart saves the question to favourites', (tester) async {

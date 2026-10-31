@@ -64,9 +64,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get played => 'Played';
-
-  @override
   String get previous => 'Previous';
 
   @override

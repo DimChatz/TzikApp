@@ -19,7 +19,6 @@
   "question": "Ερώτηση",
   "noSuchQuestion": "Δεν υπάρχει ερώτηση {number}.",
   "playedCount": "{played, plural, =1{Παίχτηκε 1 από {total}} other{Παίχτηκαν {played} από {total}}}",
-  "played": "Παίχτηκε",
   "previous": "Προηγούμενη",
   "next": "Επόμενη",
   "markPlayed": "Σήμανση ως παιγμένη",
