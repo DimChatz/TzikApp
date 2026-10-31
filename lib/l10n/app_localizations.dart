@@ -188,12 +188,6 @@ abstract class AppLocalizations {
   /// **'{played} of {total} played'**
   String playedCount(int played, int total);
 
-  /// No description provided for @played.
-  ///
-  /// In en, this message translates to:
-  /// **'Played'**
-  String get played;
-
   /// No description provided for @previous.
   ///
   /// In en, this message translates to:

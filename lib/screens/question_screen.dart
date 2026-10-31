@@ -119,29 +119,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       return Center(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(32),
-                          child: Column(
-                            children: [
-                              Text(
-                                question.textFor(locale),
-                                textAlign: TextAlign.center,
-                                style: textTheme.headlineMedium?.copyWith(
-                                  color: brandNavy,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              if (played.contains(question.index)) ...[
-                                const SizedBox(height: 20),
-                                Chip(
-                                  avatar: const Icon(
-                                    Icons.check,
-                                    color: brandNavy,
-                                  ),
-                                  label: Text(l10n.played),
-                                  backgroundColor: Colors.white54,
-                                  side: BorderSide.none,
-                                ),
-                              ],
-                            ],
+                          child: Text(
+                            question.textFor(locale),
+                            textAlign: TextAlign.center,
+                            style: textTheme.headlineMedium?.copyWith(
+                              color: brandNavy,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       );

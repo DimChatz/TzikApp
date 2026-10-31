@@ -49,7 +49,6 @@
       "total": { "type": "int" }
     }
   },
-  "played": "Played",
   "previous": "Previous",
   "next": "Next",
   "markPlayed": "Mark as played",

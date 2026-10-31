@@ -70,9 +70,6 @@ class AppLocalizationsEl extends AppLocalizations {
   }
 
   @override
-  String get played => 'Παίχτηκε';
-
-  @override
   String get previous => 'Προηγούμενη';
 
   @override
