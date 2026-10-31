@@ -10,6 +10,7 @@ import '../services/teams_store.dart';
 import '../theme.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/language_button.dart';
+import '../widgets/same_size_text.dart';
 
 /// Shows the questions one at a time, in index order, for one team. Swipe or
 /// use Previous/Next to move through them, or type a number in the title to
@@ -100,9 +101,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
             final played = widget.team.played;
             return Column(
               children: [
-                Text(
-                  '${widget.team.name} · '
-                  '${l10n.playedCount(played.length, widget.questions.length)}',
+                SameSizeText(
+                  (l10n) =>
+                      '${widget.team.name} · '
+                      '${l10n.playedCount(played.length, widget.questions.length)}',
                   style: textTheme.titleSmall?.copyWith(
                     color: brandNavy.withValues(alpha: 0.7),
                   ),
@@ -150,15 +152,21 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                   child: Row(
                     children: [
+                      // The arrows keep to the outer edges, however long the
+                      // word is in the language the app is in.
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: OutlinedButton(
                           onPressed: _isFirst ? null : () => _step(-1),
                           style: OutlinedButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                           ),
-                          icon: const Icon(Icons.arrow_back),
-                          label: _OneLine(l10n.previous),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.arrow_back),
+                              Expanded(child: _OneLine(l10n.previous)),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -167,15 +175,18 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       _favouriteButton(outlined),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: FilledButton.icon(
+                        child: FilledButton(
                           onPressed: _isLast ? null : () => _step(1),
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                           ),
-                          icon: const Icon(Icons.arrow_forward),
-                          iconAlignment: IconAlignment.end,
-                          label: _OneLine(l10n.next),
+                          child: Row(
+                            children: [
+                              Expanded(child: _OneLine(l10n.next)),
+                              const Icon(Icons.arrow_forward),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -324,7 +335,12 @@ class _QuestionNumberState extends State<_QuestionNumber> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('${AppLocalizations.of(context).question} ', style: style),
+        // Next to the number, so the number stays put in every language.
+        SameSizeText(
+          (l10n) => '${l10n.question} ',
+          style: style,
+          alignment: AlignmentDirectional.centerEnd,
+        ),
         GestureDetector(
           onTap: _focus.requestFocus,
           child: Container(

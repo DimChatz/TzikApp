@@ -66,6 +66,10 @@ The app's own words (buttons, titles, messages) are in [`lib/l10n/app_en.arb`](l
 files under the same name, then run `flutter gen-l10n` to update the generated
 `lib/l10n/app_localizations*.dart` files. Commit those too, and don't edit them by hand.
 
+So that switching language doesn't move anything, buttons and texts keep the same size in
+both languages: each takes the room its longer translation needs. A much longer text in
+one language therefore makes the same button or line bigger in the other one too.
+
 ## Setting up proposals
 
 The app can't safely hold your email password, so proposals go through Formspree, a free

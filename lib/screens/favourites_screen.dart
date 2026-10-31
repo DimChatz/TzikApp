@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../models/question.dart';
 import '../services/favourites_store.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/same_size_text.dart';
 
 class FavouritesScreen extends StatelessWidget {
   const FavouritesScreen({
@@ -67,8 +68,8 @@ class FavouritesScreen extends StatelessWidget {
                         color: theme.colorScheme.outline,
                       ),
                       const SizedBox(height: 16),
-                      Text(
-                        l10n.noFavourites,
+                      SameSizeText(
+                        (l10n) => l10n.noFavourites,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyLarge,
                       ),

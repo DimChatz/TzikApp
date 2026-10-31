@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../services/proposal_sender.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/same_size_text.dart';
 
 class ProposeScreen extends StatefulWidget {
   const ProposeScreen({super.key, this.sender});
@@ -76,7 +77,11 @@ class _ProposeScreenState extends State<ProposeScreen> {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-              Text(l10n.proposeIntro, style: theme.textTheme.bodyLarge),
+              SameSizeText(
+                (l10n) => l10n.proposeIntro,
+                style: theme.textTheme.bodyLarge,
+                alignment: AlignmentDirectional.topStart,
+              ),
               const SizedBox(height: 24),
               TextFormField(
                 controller: _question,
@@ -118,7 +123,9 @@ class _ProposeScreenState extends State<ProposeScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.send),
-                label: Text(_sending ? l10n.sending : l10n.send),
+                label: SameSizeText(
+                  (l10n) => _sending ? l10n.sending : l10n.send,
+                ),
               ),
             ],
           ),
