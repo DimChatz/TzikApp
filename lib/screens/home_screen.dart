@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const Spacer(flex: 2),
                             _TeamPicker(
                               teams: widget.teams,
-                              questionCount: widget.questions.length,
+                              questions: widget.questions,
                             ),
                             const SizedBox(height: 28),
                             _StartButton(onPressed: _start),
@@ -183,10 +183,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 /// Buttons to create a team and to pick which one is playing.
 class _TeamPicker extends StatelessWidget {
-  const _TeamPicker({required this.teams, required this.questionCount});
+  const _TeamPicker({required this.teams, required this.questions});
 
   final TeamsStore teams;
-  final int questionCount;
+  final List<Question> questions;
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +227,7 @@ class _TeamPicker extends StatelessWidget {
                       : () => showSelectTeamDialog(
                           context,
                           teams,
-                          questionCount: questionCount,
+                          questions: questions,
                         ),
                   icon: const Icon(Icons.groups_outlined),
                   label: SameSizeText((l10n) => l10n.selectTeam),
