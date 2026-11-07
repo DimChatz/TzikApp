@@ -8,8 +8,9 @@ class Question {
   /// jump straight to the question.
   final int index;
 
-  /// In English. Favourites are saved by this text, so they work in both
-  /// languages.
+  /// In English. Favourites, played questions and where each team left off
+  /// are saved by this text, so they work in both languages and survive
+  /// renumbering the questions.
   final String text;
 
   /// The `text_el` translation, if the question has one.

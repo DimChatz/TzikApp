@@ -16,7 +16,7 @@ Built with Flutter for Android and iOS.
    to **Favourites**.
 4. Every team goes through the questions on its own: a new team starts at question 1 with
    nothing played, and going back to a team carries on where it left off. Teams are stored
-   on the device. Played questions are stored by their `index`.
+   on the device.
 5. **Propose a question** sends the proposal straight from the app. It arrives in your
    inbox through [Formspree](https://formspree.io) (see [Setting up proposals](#setting-up-proposals)).
 6. The app is in English and Greek. The 🌐 button (top right of the home screen and of the
@@ -58,6 +58,11 @@ All questions live in [`assets/questions.json`](assets/questions.json), one per 
 Favourites are stored on the device by their English `text`, so a favourite shows in
 whichever language the app is in, and stays even if you later remove that question. If you
 edit a question's English `text`, favourites saved before the edit keep the old wording.
+
+Each team's played questions, and the question it left off at, are also stored by their
+English `text`, so you can renumber or reorder the questions freely without mixing them up.
+Editing a question's English `text` unmarks it as played for every team. A team that left
+off at a question that is later removed carries on from the same position in the list.
 
 ## Changing the app's texts
 

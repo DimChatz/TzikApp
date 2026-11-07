@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/question.dart';
 import '../models/team.dart';
 
 /// The teams, saved on the device, and which one is playing.
@@ -73,15 +74,16 @@ class TeamsStore extends ChangeNotifier {
     await _save();
   }
 
-  /// Remembers where [team] is in the question list.
-  Future<void> setPage(Team team, int page) async {
-    if (team.page == page) return;
+  /// Remembers that [team] is on [question], at [page] in the question list.
+  Future<void> setPlace(Team team, int page, Question question) async {
+    if (team.page == page && team.question == question.text) return;
     team.page = page;
+    team.question = question.text;
     await _save();
   }
 
-  Future<void> togglePlayed(Team team, int questionIndex) async {
-    if (!team.played.remove(questionIndex)) team.played.add(questionIndex);
+  Future<void> togglePlayed(Team team, Question question) async {
+    if (!team.played.remove(question.text)) team.played.add(question.text);
     notifyListeners();
     await _save();
   }

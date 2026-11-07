@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
+import '../models/question.dart';
 import '../models/team.dart';
 import '../services/teams_store.dart';
 import '../theme.dart';
@@ -18,10 +19,10 @@ Future<Team?> showCreateTeamDialog(BuildContext context, TeamsStore teams) =>
 Future<void> showSelectTeamDialog(
   BuildContext context,
   TeamsStore teams, {
-  required int questionCount,
+  required List<Question> questions,
 }) => showDialog<void>(
   context: context,
-  builder: (_) => _SelectTeamDialog(teams: teams, questionCount: questionCount),
+  builder: (_) => _SelectTeamDialog(teams: teams, questions: questions),
 );
 
 class _CreateTeamDialog extends StatefulWidget {
@@ -93,10 +94,10 @@ class _CreateTeamDialogState extends State<_CreateTeamDialog> {
 }
 
 class _SelectTeamDialog extends StatelessWidget {
-  const _SelectTeamDialog({required this.teams, required this.questionCount});
+  const _SelectTeamDialog({required this.teams, required this.questions});
 
   final TeamsStore teams;
-  final int questionCount;
+  final List<Question> questions;
 
   Future<void> _delete(BuildContext context, Team team) async {
     final l10n = AppLocalizations.of(context);
@@ -171,7 +172,10 @@ class _SelectTeamDialog extends StatelessWidget {
                     ),
                   ),
                   subtitle: Text(
-                    l10n.playedCount(team.played.length, questionCount),
+                    l10n.playedCount(
+                      team.playedIn(questions),
+                      questions.length,
+                    ),
                   ),
                   trailing: IconButton(
                     tooltip: l10n.deleteTeam(team.name),

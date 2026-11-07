@@ -41,7 +41,7 @@ class QuestionScreen extends StatefulWidget {
 }
 
 class _QuestionScreenState extends State<QuestionScreen> {
-  late int _page = widget.team.page.clamp(0, widget.questions.length - 1);
+  late int _page = widget.team.pageIn(widget.questions);
   late final _pages = PageController(initialPage: _page);
 
   Question get _question => widget.questions[_page];
@@ -56,7 +56,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   void _onPageChanged(int page) {
     setState(() => _page = page);
-    widget.teams.setPage(widget.team, page);
+    widget.teams.setPlace(widget.team, page, widget.questions[page]);
   }
 
   void _step(int by) => _pages.animateToPage(
@@ -98,13 +98,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
         child: ListenableBuilder(
           listenable: widget.teams,
           builder: (context, _) {
-            final played = widget.team.played;
+            final team = widget.team;
+            final playedCount = team.playedIn(widget.questions);
             return Column(
               children: [
                 SameSizeText(
                   (l10n) =>
-                      '${widget.team.name} · '
-                      '${l10n.playedCount(played.length, widget.questions.length)}',
+                      '${team.name} · '
+                      '${l10n.playedCount(playedCount, widget.questions.length)}',
                   style: textTheme.titleSmall?.copyWith(
                     color: brandNavy.withValues(alpha: 0.7),
                   ),
@@ -154,7 +155,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      _playedButton(played.contains(_question.index), outlined),
+                      _playedButton(
+                        team.played.contains(_question.text),
+                        outlined,
+                      ),
                       const SizedBox(width: 8),
                       _favouriteButton(outlined),
                       const SizedBox(width: 8),
@@ -190,7 +194,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         : AppLocalizations.of(context).markPlayed,
     iconSize: 28,
     style: style,
-    onPressed: () => widget.teams.togglePlayed(widget.team, _question.index),
+    onPressed: () => widget.teams.togglePlayed(widget.team, _question),
     icon: _AnimatedIcon(
       icon: played ? Icons.check_circle : Icons.check_circle_outline,
       color: brandNavy,
